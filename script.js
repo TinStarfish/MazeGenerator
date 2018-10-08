@@ -18,15 +18,18 @@ var FOLLOW_COLOR = 'rgb(245,229,192)';
 var StartPoint;
 var EndPoint;
 
+var Visited = [];
+var Traceback = [];
 
 function Main () {
     DrawCanvas();
     DrawMaze();
+    DepthFirstSearchIterative();
     
 }
 
 function DrawCanvas() {
-    
+    Visited = [];
     canvas = document.getElementById("myCanvas");
     ctx = canvas.getContext('2d');
     grid = [];
@@ -106,51 +109,47 @@ function SetNodes() {
     
 }
 
+//function FindNearestNeighbors(){
+
+
+
+//}
+
+function DepthFirstSearchIterative() {
+    
+    Visited.push(StartPoint);
+    Traceback.push(StartPoint);
+    console.log(Visited);
+    
+    
+    
+    
+}
+
 function DrawStartAndEndPoints() {
     var randSide = Math.floor(Math.random()*4);
     var boolean = true;
     var randX;
     var randY;
-    
-    while(boolean) {
-    
-        randX = Math.floor(Math.random()*23);
-        randY = Math.floor(Math.random()*23); 
+    /*
+    b = Math.floor(Math.Random(MW-1)/2);
+    c = b*2+1
+    randX = c;
+    */
+    if(randSide==0 || randSide==2){
+        randX = Math.floor(Math.random(MAZE_WIDTH-1)/2) * 2 + 1;
+        randY = 1;
+        grid[randX][randY] = 2;
         
-        if(randX%2==0 || randY%2==0) {
-            boolean = true;
-            
-        } else {
-            
-            boolean = false;
-        }
+    }
+    if(randSide==1 || randSide==3){
+        randX = 1;
+        randY = Math.floor(Math.random(MAZE_HEIGHT-1)/2) * 2 + 1;
+        grid[randX][randY] = 2;
         
         
     }
     
-   
-    
-    
-    if(randSide==0) {
-        grid[1][randY] = 2;
-        grid[23][randY] = 3;
-        
-    }
-    if(randSide==1) {
-        grid[randX][1] = 2;
-        grid[randX][23] = 3;
-        
-    }
-    if(randSide==2) {
-        grid[randX][1] = 2;
-        grid[randX][23] = 3;
-        
-    }
-    if(randSide==3) {
-        grid[randX][1] = 2;
-        grid[randX][23] = 3;
-        
-    }
     
     
     
