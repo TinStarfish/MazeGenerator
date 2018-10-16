@@ -69,9 +69,6 @@ function MazeBase() {
 }
 
 function DrawMaze() {
-
-    //CREATE START AND END POINTS RANDOMLY
-
    
     for(var y = 0; y<MAZE_TEMP_HEIGHT;y++) {
         for(var x=0; x<MAZE_TEMP_WIDTH;x++) {
@@ -123,136 +120,85 @@ function SetNodes() {
     
 }
 
-function FindNearestNeighbors(){
-
-
-
-}
-
 function DepthFirstSearchIterative() {
-    Visited = [currentNode_X,currentNode_Y];
-    //Visited.push(currentNode_X,currentNode_Y);
-    Visited.push(3);
     
-    Traceback.push(StartPoint);
-    console.log(Visited);
-    
-    var nextNode;
-
-    
-    currentNode = Visited[0];
+    Visited.push({x:currentNode_X, y:currentNode_Y});
+    Traceback.push({x:currentNode_X, y:currentNode_Y});
     
     for(var i = 0; i < MAZE_TEMP_HEIGHT*MAZE_TEMP_WIDTH;i++) {
-            var randomDir = Math.floor(Math.random()*4);
         
-            if(randomDir==0){
-                 if(currentNode_X-2>1) {
-                    for(var x = 0; x < Visited.length; x++){
-                            if(grid[currentNode_X-2][currentNode_Y]==Visited[x]){
-                                console.log("It's already added, mi amigo");
-                                
-                                break;
-
-                            } else {
-                                currentNode_X = currentNode_X-2;
-                                grid[currentNode_X][currentNode_Y] = 4;
-                                
-                                
-                                grid[currentNode_X+1][currentNode_Y] = 4;
-                                
-                                console.log("Cur X:" + currentNode_X + "Cur Y:" + currentNode_Y);
-                                
-                            }
-                        
-                    }
-                    
-                     
-                 } else {
-                    console.log("'Round the outside");
-                
-                 }
-                
-                
-            }
-        if(randomDir==1){
-                 if(currentNode_X+2<MAZE_TEMP_HEIGHT-2){
-                    for(var x = 0; x < Visited.length; x++){
-                            if(grid[currentNode_X+2][currentNode_Y]==Visited[x]){
-                                console.log("It's already added, mi amigo");
-                                break;
-                                
-                            } else {
-                                currentNode_X = currentNode_X+2;
-                                grid[currentNode_X][currentNode_Y] = 4;
-                                grid[currentNode_X-1][currentNode_Y] = 4;
-                              
-                                
-                            }
-                        
-                    }
-                    
-                     
-                 } else {
-                    
-                
-                 }
-                
-                
-            }
-        if(randomDir==2){
-                 if(currentNode_Y-2>1){
-                    for(var x = 0; x < Visited.length; x++){
-                            if(grid[currentNode_X][currentNode_Y-2]==Visited[i]){
-                                console.log("It's already added, mi amigo");
-                                break;
-                                
-                            } else {
-                                currentNode_Y = currentNode_Y-2;
-                                grid[currentNode_X][currentNode_Y] = 4; //set node to path
-                                grid[currentNode_X][currentNode_Y+1] = 4; //set wall to path
+//        console.log(Visited);
+        
+        var possibleDirections = "";
 
         
-                                
-                            }
-                        
-                    }
-                    
-                     
-                 } else {
-                    console.log("YOU DUN F*CKED UP");
-                
-                 }
-                
-                
-            }
+        //check below node
+        if(currentNode_Y+2>0 && currentNode_Y+2<MAZE_TEMP_HEIGHT && grid[currentNode_X][currentNode_Y+2] == 0) { 
+            possibleDirections += "D";
             
-        if(randomDir==3){
-                 if(currentNode_X+2<MAZE_TEMP_WIDTH-2){
-                    for(var x = 0; x < Visited.length; x++){
-                            if(grid[currentNode_X][currentNode_Y+2]==Visited[i]){
-                                console.log("It's already added, mi amigo");
-                                break;
-                            } else {
-                                currentNode_Y = currentNode_Y+2;
-                                grid[currentNode_X][currentNode_Y] = 4; //set node to path
-                                grid[currentNode_X][currentNode_Y-1] = 4; //set wall to path
-                                
-                                
-                            }
-                        
-                    }
-                   
-                     
-                 } else {
-                    console.log("YOU DUN F*CKED UP");
-                
-                 }
-                
-                
-            } 
+        }
+        //check above node
+        if(currentNode_Y-2>0 && currentNode_Y-2<MAZE_TEMP_HEIGHT && grid[currentNode_X][currentNode_Y-2] == 0) {
+            possibleDirections += "U";
+            
+        }
+        //check left node
+        if(currentNode_X-2>0 && currentNode_X-2<MAZE_TEMP_WIDTH && grid[currentNode_X-2][currentNode_Y] == 0) {
+            possibleDirections += "L";
+            
+        }
+        //check right node
+         if(currentNode_X+2>0 && currentNode_X+2<MAZE_TEMP_WIDTH && grid[currentNode_X+2][currentNode_Y] == 0) {
+            possibleDirections += "R";
+            
+        }
+        
+        console.log("Possible directions- " + possibleDirections);
+    
+        
+        if(possibleDirections){
+             var randomDir = Math.floor(Math.random()*(possibleDirections.length-1)+0);
+//                console.log("Random direction- " + randomDir);
+             switch (possibleDirections[randomDir]) {
+            case "U":
+                grid[currentNode_X][currentNode_Y-2] = 4;
+                grid[currentNode_X][currentNode_Y-1] = 4;
+                currentNode_Y+=-2;
+                break;
+            case "D":
+                grid[currentNode_X][currentNode_Y+2] = 4;
+                grid[currentNode_X][currentNode_Y+1] = 4;
+                currentNode_Y+=2;
+                break;
+            case "L":
+                grid[currentNode_X-2][currentNode_Y] = 4;
+                grid[currentNode_X-1][currentNode_Y] = 4;
+                currentNode_X+=-2;
+                break;
+            case "R":
+                grid[currentNode_X+2][currentNode_Y] = 4;
+                grid[currentNode_X+1][currentNode_Y] = 4;
+                currentNode_X+=2;
+                break;
+            
+            
+            }
+            Visited.push({x:currentNode_X, y:currentNode_Y});
+            console.log(Visited);
+            //Traceback.push({x:currentNode_X, y:currentNode_Y});
+           
+        } else {
+            if(Visited.length > 0) {
+                currentNode_X = Visited[Visited.length-1].x;
+                currentNode_Y = Visited[Visited.length-1].y;
+            }
+            Visited.pop();
+            
+            
+        }      
                     
         
-    }    
+    }  
     
 }
 
