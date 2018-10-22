@@ -13,10 +13,10 @@ var MAZE_TEMP_WIDTH = 25;
 var MAZE_TEMP_HEIGHT = 25;
 
 var WALL_COLOR = 'rgb(47,52,64)';
-var PATH_COLOR = 'rgb(63,86,102)';
+var FOLLOW_COLOR = 'rgb(80,110,130)';
 var START_COLOR = 'rgb(248,202,77)';
 var END_COLOR = 'rgb(181,74,53)';
-var FOLLOW_COLOR = 'rgb(245,229,192)';
+var PATH_COLOR = 'rgb(113, 155,184)';
 
 var StartPoint;
 var EndPoint;
@@ -26,13 +26,17 @@ var currentNode_Y;
 
 var Visited = [];
 var Traceback = [];
+var TracebackCopy = [];
+var TracebackLongest = 0;
 
 function Main () {
     DrawCanvas();
     MazeBase();
     SetNodes();
-    DrawStartAndEndPoints();
+    DrawStartPoint();
     DepthFirstSearchIterative();
+    DrawEndPoint();
+    DrawAI();
     DrawMaze();
     
 }
@@ -127,9 +131,15 @@ function DepthFirstSearchIterative() {
     
     for(var i = 0; i < MAZE_TEMP_HEIGHT*MAZE_TEMP_WIDTH;i++) {
         
-//        console.log(Visited);
-        
+        if(Traceback.length>TracebackLongest){
+            TracebackCopy=Traceback.slice();
+            TracebackLongest=Traceback.length;
+            
+        }
+             
+        //console.log(TracebackCopy);
         var possibleDirections = "";
+        var previousDirection = "";
 
         
         //check below node
@@ -153,46 +163,90 @@ function DepthFirstSearchIterative() {
             
         }
         
-        console.log("Possible directions- " + possibleDirections);
+        //console.log("Possible directions- " + possibleDirections);
     
         
         if(possibleDirections){
-             var randomDir = Math.floor(Math.random()*(possibleDirections.length-1)+0);
-//                console.log("Random direction- " + randomDir);
-             switch (possibleDirections[randomDir]) {
+             var randomDir = Math.floor(Math.random()*(possibleDirections.length));
+        switch (possibleDirections[randomDir]) {
             case "U":
-                grid[currentNode_X][currentNode_Y-2] = 4;
-                grid[currentNode_X][currentNode_Y-1] = 4;
-                currentNode_Y+=-2;
-                break;
+                if(previousDirection!="U"){
+                    grid[currentNode_X][currentNode_Y-2] = 4;
+                    grid[currentNode_X][currentNode_Y-1] = 4;
+                    currentNode_Y+=-2;
+                    
+                    previousDirection="U";
+                   
+                   } else {
+                        
+                      //console.log("previous direction was 'UP', choosing another direction.");
+                       
+                   }
+               
+               break;
             case "D":
-                grid[currentNode_X][currentNode_Y+2] = 4;
-                grid[currentNode_X][currentNode_Y+1] = 4;
-                currentNode_Y+=2;
+                if(previousDirection!="D"){
+                    grid[currentNode_X][currentNode_Y+2] = 4;
+                    grid[currentNode_X][currentNode_Y+1] = 4;
+                    currentNode_Y+=2;
+
+                    previousDirection="D";
+                          
+                } else {
+                    
+                    //console.log("previous direction was 'DOWN', choosing another direction.");
+                    break;
+                    
+                }
+                
                 break;
             case "L":
-                grid[currentNode_X-2][currentNode_Y] = 4;
-                grid[currentNode_X-1][currentNode_Y] = 4;
-                currentNode_X+=-2;
+                if(previousDirection!="L"){
+                    grid[currentNode_X-2][currentNode_Y] = 4;
+                    grid[currentNode_X-1][currentNode_Y] = 4;
+                    currentNode_X+=-2;
+
+                    previousDirection="L";
+                    
+                } else {
+                    
+                     //console.log("previous direction was 'LEFT', choosing another direction.");
+                    
+                }
+                     
+                     
                 break;
             case "R":
-                grid[currentNode_X+2][currentNode_Y] = 4;
-                grid[currentNode_X+1][currentNode_Y] = 4;
-                currentNode_X+=2;
+                if(previousDirection!="R") {
+                    grid[currentNode_X+2][currentNode_Y] = 4;
+                    grid[currentNode_X+1][currentNode_Y] = 4;
+                    currentNode_X+=2;
+                    previousDirection="R";
+                    
+                }
+                     
+                else {
+                    
+                     //console.log("previous direction was 'RIGHT', choosing another direction.");
+                    
+                }
+               
                 break;
             
             
             }
             Visited.push({x:currentNode_X, y:currentNode_Y});
-            console.log(Visited);
-            //Traceback.push({x:currentNode_X, y:currentNode_Y});
+            //console.log(Visited);
+            Traceback.push({x:currentNode_X, y:currentNode_Y});  
            
         } else {
-            if(Visited.length > 0) {
-                currentNode_X = Visited[Visited.length-1].x;
-                currentNode_Y = Visited[Visited.length-1].y;
+            if(Traceback.length > 0) {
+                currentNode_X = Traceback[Traceback.length-1].x;
+                currentNode_Y = Traceback[Traceback.length-1].y;
+               
             }
-            Visited.pop();
+            
+            Traceback.pop();
             
             
         }      
@@ -202,16 +256,11 @@ function DepthFirstSearchIterative() {
     
 }
 
-function DrawStartAndEndPoints() {
+function DrawStartPoint() {
     var randSide = Math.floor(Math.random()*4);
-    console.log("random side: " + randSide);
     var randX;
     var randY;
-    /*
-    b = Math.floor(Math.Random(MW-1)/2);
-    c = b*2+1
-    randX = c;
-    */
+    
     if(randSide==0 || randSide==2){
         randX = (Math.floor(Math.random()*(MAZE_TEMP_WIDTH-1)/2))*2+1;
         randY = 1;
@@ -219,7 +268,7 @@ function DrawStartAndEndPoints() {
         StartPoint = grid[randX][randY];
         currentNode_X = randX;
         currentNode_Y = randY;
-        console.log("Ran:"+randSide + " X:" + randX + " Y:" + randY);
+        
     
         
     }
@@ -230,9 +279,75 @@ function DrawStartAndEndPoints() {
         StartPoint = grid[randX][randY];
         currentNode_X = randX;
         currentNode_Y = randY;
-        console.log("Ran:"+randSide + " X:" + randX + " Y:" + randY);
+       
          
     }
 }
+
+function DrawEndPoint() {
+    
+    var newXValue = TracebackCopy[TracebackCopy.length-1].x;
+    var newYValue = TracebackCopy[TracebackCopy.length-1].y;
+    console.log("End Point X- " + newXValue);
+    console.log("End Point Y- " + newYValue);
+    grid[newXValue][newYValue]=3;
+    
+}
+
+function DrawAI() {
+    for (var i = 0; i < TracebackCopy.length; i++) {
+        setInterval(AnimateAI(i), 1000);
+       
+            
+            
+        
+        
+    }
+    
+    
+   
+    
+        
+}
+
+function AnimateAI(x) {
+      
+    var newXValue = TracebackCopy[x].x;
+    var newYValue = TracebackCopy[x].y;
+    
+    if(grid[newXValue][newYValue]==2 || grid[newXValue][newYValue]==3) {
+        //console.log("That's the start point.");
+        
+    } else {
+        grid[newXValue][newYValue] = 0;
+        
+    }
+    
+    //console.log("animate frame- "+x);
+    //DrawMaze();   
+    
+    
+   
+    
+   
+    
+    
+    
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Main();
