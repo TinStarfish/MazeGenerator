@@ -327,27 +327,7 @@ function AnimateAI(x) {
     //DrawMaze();   
     
     
-   
-    
-   
-    
-    
-    
     
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 Main();
