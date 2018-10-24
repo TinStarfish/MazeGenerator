@@ -17,12 +17,16 @@ var FOLLOW_COLOR = 'rgb(80,110,130)';
 var START_COLOR = 'rgb(248,202,77)';
 var END_COLOR = 'rgb(181,74,53)';
 var PATH_COLOR = 'rgb(113, 155,184)';
+var PLAYER_COLOR = 'rgb(150, 110, 121)';
 
 var StartPoint;
 var EndPoint;
 var currentNode;
 var currentNode_X;
 var currentNode_Y;
+
+var playerNode_X;
+var playerNode_Y;
 
 var Visited = [];
 var Traceback = [];
@@ -36,12 +40,40 @@ function Main () {
     DrawStartPoint();
     DepthFirstSearchIterative();
     DrawEndPoint();
-    DrawAI();
+    DrawPlayer();
+    //DrawAI();
+    //PlayerMovement();
     DrawMaze();
     
 }
 
+document.addEventListener('keydown', function(event) {
+    if (event.code == 'KeyW') {
+        PlayerMovement('keyW');
+        
+    }
+     if (event.code == 'KeyS') {
+        PlayerMovement('keyS');
+        
+    }
+    
+     if (event.code == 'KeyA') {
+        PlayerMovement('keyA');
+        
+    }
+     if (event.code == 'KeyD') {
+        PlayerMovement('keyD');
+        
+    }
+    
+    
+})
+
 function DrawCanvas() {
+    
+    playerNode_X = 1;
+    playerNode_Y = 3;
+    
     Visited = [];
     canvas = document.getElementById("myCanvas");
     ctx = canvas.getContext('2d');
@@ -100,11 +132,23 @@ function DrawMaze() {
                 DrawSquare(x*BLOCK_SIZE,y*BLOCK_SIZE, FOLLOW_COLOR);
                 
             }
+    //DRAE PLAYER
+            if(grid[x][y] == 5) {
+                DrawSquare(x*BLOCK_SIZE, y*BLOCK_SIZE, PLAYER_COLOR);
+                
+                
+            }
             
             
         }
         
     }
+    
+    
+}
+
+function DrawPlayer() {
+    
     
     
 }
@@ -298,15 +342,8 @@ function DrawAI() {
     for (var i = 0; i < TracebackCopy.length; i++) {
         setInterval(AnimateAI(i), 1000);
        
-            
-            
-        
-        
-    }
-    
-    
-   
-    
+               
+    }  
         
 }
 
@@ -330,4 +367,112 @@ function AnimateAI(x) {
     
 }
 
+function PlayerMovement(direction) {
+    
+       //grid[playerNode_X][playerNode_Y] = 5;
+    
+   
+       
+       if (direction=='keyW') {
+            //Up
+            if (grid[playerNode_X][playerNode_Y-1]==4) {
+                grid[playerNode_X][playerNode_Y-1] = 5;
+                
+            
+            } 
+           
+           console.log("Up");
+       
+       
+       }
+       
+    /*
+       if (direction=='keyS') {
+           
+           if (grid[playerNode_X][playerNode_Y+1]!=null && grid[playerNode_X][playerNode_Y+1]!=1) {
+               grid[playerNode_X][playerNode_X] = 4; 
+               grid[playerNode_X][playerNode_Y+1] = 5;
+                
+                
+                playerNode_X = grid[playerNode_X][playerNode_Y-1].x;
+                playerNode_Y = grid[playerNode_X][playerNode_Y-1].y;
+                
+            
+            } else {
+                console.log("That's a wall mate");
+                
+            }
+           
+            console.log("Down");
+       
+       
+       }
+       
+       if (direction=='keyA') {
+           
+           if (grid[playerNode_X-1][playerNode_Y]!=null && grid[playerNode_X][playerNode_Y+1]!=1) {
+               grid[playerNode_X][playerNode_X] = 4; 
+               grid[playerNode_X][playerNode_Y+1] = 5;
+                
+                
+                playerNode_X = grid[playerNode_X-1][playerNode_Y].x;
+                playerNode_Y = grid[playerNode_X-1][playerNode_Y].y;
+                
+            
+            } else {
+                console.log("That's a wall mate");
+                
+            }
+           
+        console.log("Left");
+       
+       
+       }
+       
+       if (direction=='keyD') {
+           
+           if (grid[playerNode_X][playerNode_Y+1]!=null && grid[playerNode_X][playerNode_Y+1]!=1) {
+               grid[playerNode_X][playerNode_X] = 4; 
+               grid[playerNode_X][playerNode_Y+1] = 5;
+                
+                
+                playerNode_X = grid[playerNode_X][playerNode_Y-1].x;
+                playerNode_Y = grid[playerNode_X][playerNode_Y-1].y;
+                
+            
+            } else {
+                console.log("That's a wall mate");
+                
+            }
+           
+        console.log("Right");
+       
+       
+       }
+       
+    */
+    
+     DrawMaze();
+    
+}
+/*
+function moveBox(){
+    console.log(path[currentStop+1]);
+    temp = path[currentStop+1];
+    if(boxX < temp.x*BLOCK_SIZE) boxX += 5;
+    if(boxX > temp.x*BLOCK_SIZE) boxX -= 5;
+
+    if(boxY < temp.y*BLOCK_SIZE) boxY += 5;
+    if(boxY > temp.y*BLOCK_SIZE) boxY -= 5;
+    if(boxX == temp.x*BLOCK_SIZE && boxY==temp.y*BLOCK_SIZE){
+        currentStop++;
+    }
+    if(currentStop >= path.length-1) currentStop = 0;
+    ctx.clearRect(0,0,500,500);
+
+    drawSquare(boxX,boxY);
+    //boxX+=5;
+    //if(boxX>500) boxX=0-BLOCK_SIZE;
+}
+*/
 Main();
